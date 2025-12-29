@@ -13,7 +13,7 @@ A full-stack web application developed using **Java Spring Boot** for the backen
 - **Database**: H2 (In-Memory Database)
 - **Frontend**: HTML5, CSS3, JavaScript (Fetch API)
 - **Build Tool**: Maven
-- **Tooling**: VS Code / IntelliJ IDEA
+- **Tooling**: VS Code
 
 ## 🏗️ Project Architecture
 The project follows a **Layered Architecture** to ensure modularity and separation of concerns:
