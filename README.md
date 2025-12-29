@@ -34,8 +34,3 @@ The project follows a **Layered Architecture** to ensure modularity and separati
 - **Inheritance**: `CustomerRepository` extends `JpaRepository`.
 - **Abstraction**: Hiding DB complexity via the JPA layer.
 - **Polymorphism**: Method overriding for REST controller mappings.
-
-## ⚙️ How to Run
-1. Clone the repository:
-   ```bash
-   git clone <your-repository-link>
