@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Management</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f0f2f5; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 900px; margin: auto; }
+        input { padding: 10px; margin: 5px; border: 1px solid #ccc; border-radius: 5px; width: 250px; }
+        .btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; color: white; }
+        .btn-add { background: #007bff; }
+        .btn-update { background: #28a745; display: none; }
+        .btn-edit { background: #ffc107; color: black; }
+        .btn-delete { background: #dc3545; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Customer Management System</h2>
+        <input type="hidden" id="custId">
+        <input type="text" id="name" placeholder="Customer Name">
+        <input type="text" id="address" placeholder="Customer Address">
+        
+        <button class="btn btn-add" id="addBtn" onclick="saveCustomer()">Add Customer</button>
+        <button class="btn btn-update" id="updateBtn" onclick="updateCustomer()">Update Customer</button>
+
+        <table>
+            <thead>
+                <tr><th>ID</th><th>Name</th><th>Address</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="content"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const API = "/api/customers";
+
+        async function fetchCustomers() {
+            const res = await fetch(API);
+            const data = await res.json();
+            document.getElementById("content").innerHTML = data.map(c => `
+                <tr>
+                    <td>${c.id}</td>
+                    <td>${c.name}</td>
+                    <td>${c.address}</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="prepareEdit(${c.id}, '${c.name}', '${c.address}')">Edit</button>
+                        <button class="btn btn-delete" onclick="deleteCustomer(${c.id})">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function saveCustomer() {
+            const name = document.getElementById("name").value;
+            const address = document.getElementById("address").value;
+            await fetch(API, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name, address })
+            });
+            clear();
+            fetchCustomers();
+        }
+
+        function prepareEdit(id, name, address) {
+            document.getElementById("custId").value = id;
+            document.getElementById("name").value = name;
+            document.getElementById("address").value = address;
+            document.getElementById("addBtn").style.display = "none";
+            document.getElementById("updateBtn").style.display = "inline";
+        }
+
+        async function updateCustomer() {
+            const id = document.getElementById("custId").value;
+            const name = document.getElementById("name").value;
+            const address = document.getElementById("address").value;
+            await fetch(`${API}/${id}`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name, address })
+            });
+            clear();
+            fetchCustomers();
+        }
+
+        async function deleteCustomer(id) {
+            await fetch(`${API}/${id}`, { method: 'DELETE' });
+            fetchCustomers();
+        }
+
+        function clear() {
+            document.getElementById("custId").value = "";
+            document.getElementById("name").value = "";
+            document.getElementById("address").value = "";
+            document.getElementById("addBtn").style.display = "inline";
+            document.getElementById("updateBtn").style.display = "none";
+        }
+
+        fetchCustomers();
+    </script>
+</body>
+</html>
